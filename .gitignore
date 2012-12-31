@@ -3,3 +3,5 @@ bus_data
 rail_data
 .DS_Store
 njt-map.sublime*
+gtfs.db
+gtfs.db-journal
