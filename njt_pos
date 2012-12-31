@@ -1,0 +1,11 @@
+#! /usr/bin/env ruby19
+
+require 'chronic'
+require 'pp'
+require './lib/snapshot.rb'
+
+date_str = ARGV[0] || "now"
+date = Chronic.parse(date_str)
+positions = NJTMap::Snapshot.new(date).positions
+
+pp positions
