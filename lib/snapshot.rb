@@ -9,6 +9,7 @@ module NJTMap
 	class Snapshot
 		def initialize(date)
 			@date = Time.from_time(date)
+			@seconds_into_day = @date.seconds_into_day
 			
 			unless @service_id = DB.find_service_id_for_time(@date)
 				throw DateOutOfRangeError.new
@@ -16,7 +17,7 @@ module NJTMap
 		end
 
 		def positions
-			[@date, @service_id]
+			[@date, @service_id, @seconds_into_day]
 		end
 
 		private

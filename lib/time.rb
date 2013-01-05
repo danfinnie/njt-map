@@ -12,5 +12,11 @@ module NJTMap
 		def to_s_gtfs
 			strftime('%Y%m%d')
 		end
+
+		def seconds_into_day
+			day_start_noon = Time.new(year, month, day, 12, 0, 0, utc_offset)
+			day_start_midnight = day_start_noon - 12*60*60
+			(self - day_start_midnight).to_i
+		end
 	end
 end
