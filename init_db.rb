@@ -28,7 +28,7 @@ def open_bus_and_rail(filename, &blk)
 	}.curry
 
 	File.open("bus_data/#{filename}.txt", "r:UTF-8", &process_csv[0]) 
-	File.open("rail_data/#{filename}.txt", "r:UTF-8", &process_csv[0xf000])
+	File.open("rail_data/#{filename}.txt", "r:UTF-8", &process_csv[1 << 31])
 end
 
 def inc_insert_count
