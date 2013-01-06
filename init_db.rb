@@ -49,9 +49,9 @@ id_cols = {}
 
 # Populate above variables
 File.readlines("schema.sql").each do |sql|
-	name = sql[/table\W*(.*)\(/, 1].intern
+	name = sql[/table\W*(.*?)\(/, 1].intern
 
-	id_col = sql.split(',').map {|y| !!(y =~ /[\W_]id/) }
+	id_col = sql.gsub(/,\W*primary key.*/, '').split(',').map {|y| !!(y =~ /[\W_]id/) }
 	id_cols[name] = id_col
 
 	placeholders = Array.new(id_col.size, "?").join(",")
