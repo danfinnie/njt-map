@@ -1,3 +1,4 @@
+require 'arrayfields'
 require File.join(File.dirname(__FILE__), "database.rb")
 
 # A VehiclePosition represents the progress of a vehicle between 2 stops.
@@ -16,14 +17,22 @@ module NJTMap
 			and first_stop.departure_time < :time 
 			and second_stop.departure_time > :time;
 		");
+		@@fields = @@stmt.columns[0...(@@stmt.columns.length/2)]
 
 		def self.for_service_and_time(service_id, time)
 			@@stmt.execute(service_id: service_id, time: time).map(&method(:new))
 		end
 
-		@x = :undef
 		def initialize(x)
-			@x = x
+			split = x.size/2
+			@first_stop = x[0...split]
+			@second_stop = x[split..-1]
+
+			@first_stop.fields = @@fields
+			@second_stop.fields = @@fields
+
+			# @first_stop = @first_stop.to_h
+			# @second_stop = @second_stop.to_h
 		end
 	end
 end
