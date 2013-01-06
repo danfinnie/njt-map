@@ -1,8 +1,7 @@
 require File.join(File.dirname(__FILE__), "time.rb")
 require File.join(File.dirname(__FILE__), "database.rb")
 require File.join(File.dirname(__FILE__), "exceptions.rb")
-
-
+require File.join(File.dirname(__FILE__), "vehicle_position.rb")
 
 # A Snapshot represents an instance in time and that time's current transit positions.
 module NJTMap
@@ -17,7 +16,8 @@ module NJTMap
 		end
 
 		def positions
-			[@date, @service_id, @seconds_into_day]
+			VehiclePosition.for_service_and_time(@service_id, @seconds_into_day)
+			# [@date, @service_id, @seconds_into_day]
 		end
 
 		private
