@@ -17,7 +17,7 @@ module NJTMap
 			and first_stop.departure_time < :time 
 			and second_stop.departure_time > :time;
 		");
-		@@fields = @@stmt.columns[0...(@@stmt.columns.length/2)]
+		@@fields = @@stmt.columns[0...(@@stmt.columns.length/2)].map(&:intern)
 
 		def self.for_service_and_time(service_id, time)
 			@@stmt.execute(service_id: service_id, time: time).map(&method(:new))
@@ -30,9 +30,25 @@ module NJTMap
 
 			@first_stop.fields = @@fields
 			@second_stop.fields = @@fields
+		end
 
-			# @first_stop = @first_stop.to_h
-			# @second_stop = @second_stop.to_h
+		def inspect
+			 #<NJTMap::VehiclePosition:0x007fccca924750 ...>,
+
+			"#<#{self.class}:0x#{object_id.to_s(16)} #{trip_name.inspect}> btwn #{first_stop_name.inspect} and #{second_stop_name.inspect}"
+		end
+
+		private
+		def trip_name
+			DB.get_first_value("select trip_headsign from trips where trip_id=?", @first_stop[:trip_id])
+		end
+
+		def first_stop_name
+			DB.get_first_value("select stop_name from stops where stop_id=?", @first_stop[:stop_id])
+		end
+
+		def second_stop_name
+			DB.get_first_value("select stop_name from stops where stop_id=?", @second_stop[:stop_id])
 		end
 	end
 end
