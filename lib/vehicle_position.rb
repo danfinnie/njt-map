@@ -15,7 +15,8 @@ module NJTMap
 			)
 			where first_stop.trip_id in (select trip_id from trips where service_id=:service_id)
 			and first_stop.departure_time < :time 
-			and second_stop.departure_time > :time;
+			and second_stop.departure_time > :time
+			;
 		");
 		@@fields = @@stmt.columns[0...(@@stmt.columns.length/2)].map(&:intern)
 
@@ -33,9 +34,7 @@ module NJTMap
 		end
 
 		def inspect
-			 #<NJTMap::VehiclePosition:0x007fccca924750 ...>,
-
-			"#<#{self.class}:0x#{object_id.to_s(16)} #{trip_name.inspect}> btwn #{first_stop_name.inspect} and #{second_stop_name.inspect}"
+			"#<#{self.class}:0x#{object_id.to_s(16)} #{trip_name.inspect} btwn #{first_stop_name.inspect} and #{second_stop_name.inspect}>"
 		end
 
 		private
