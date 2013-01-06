@@ -62,7 +62,14 @@ end
 	stmt = prepared_statements[filename.intern]
 	id_col = id_cols[filename.intern]
 	open_bus_and_rail(filename) do |post_process, row|
-		stmt.execute(*post_process.call(row, id_col))
+		begin
+			stmt.execute(*post_process.call(row, id_col))
+		rescue SQLite3::Exception
+			$stderr.puts "Current table: #{filename}"
+			$stderr.puts "id_col: #{id_col.inspect}"
+			$stderr.puts "row: #{row.inspect}"
+			raise $!
+		end
 	end
 end
 
@@ -74,5 +81,12 @@ open_bus_and_rail("stop_times") do |post_process, values|
 		values[i] = values[i].split(":").inject(0) { |memo, this| memo*60 + this.to_i }
 	end
 
-	stmt.execute(*post_process[values, id_col])
+	begin
+		stmt.execute(*post_process[values, id_col])
+	rescue SQLite3::Exception
+		$stderr.puts "Current table: stop_times"
+		$stderr.puts "id_col: #{id_col.inspect}"
+		$stderr.puts "row: #{values.inspect}"
+		raise $!
+	end
 end
