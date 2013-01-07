@@ -10,13 +10,13 @@ module NJTMap
 			@date = Time.from_time(date)
 			@seconds_into_day = @date.seconds_into_day
 			
-			unless @service_id = DB.find_service_id_for_time(@date)
+			unless @service_ids = DB.find_service_ids_for_time(@date)
 				throw DateOutOfRangeError.new
 			end
 		end
 
 		def positions
-			VehiclePosition.for_service_and_time(@service_id, @seconds_into_day)
+			VehiclePosition.for_services_and_time(@service_ids, @seconds_into_day)
 			# [@date, @service_id, @seconds_into_day]
 		end
 

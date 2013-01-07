@@ -6,31 +6,32 @@ require File.join(File.dirname(__FILE__), "database.rb")
 # and a one higher stop_sequence.
 module NJTMap
 	class VehiclePosition
-		@@stmt = DB.prepare("
-			select *
-			from stop_times first_stop
-			join stop_times second_stop on (
-			  first_stop.stop_sequence+1=second_stop.stop_sequence
-			  and first_stop.trip_id = second_stop.trip_id
-			)
-			where first_stop.trip_id in (select trip_id from trips where service_id=:service_id)
-			and first_stop.departure_time < :time 
-			and second_stop.departure_time > :time
-			;
-		");
-		@@fields = @@stmt.columns[0...(@@stmt.columns.length/2)].map(&:intern)
+		@@stmt = 
 
-		def self.for_service_and_time(service_id, time)
-			@@stmt.execute(service_id: service_id, time: time).map(&method(:new))
+		def self.for_services_and_time(service_ids, time)
+			resp = DB.execute2("
+				select *
+				from stop_times first_stop
+				join stop_times second_stop on (
+				  first_stop.stop_sequence+1=second_stop.stop_sequence
+				  and first_stop.trip_id = second_stop.trip_id
+				)
+				where first_stop.trip_id in (select trip_id from trips where service_id in (#{service_ids.join(',')}))
+				and first_stop.departure_time < :time 
+				and second_stop.departure_time > :time
+			;", time: time)
+
+			fields = resp.shift.map(&:intern)
+			resp.map { |row| new(fields, row) }
 		end
 
-		def initialize(x)
-			split = x.size/2
-			@first_stop = x[0...split]
-			@second_stop = x[split..-1]
+		def initialize(fields, row)
+			split = row.size/2
+			@first_stop = row[0...split]
+			@second_stop = row[split..-1]
 
-			@first_stop.fields = @@fields
-			@second_stop.fields = @@fields
+			@first_stop.fields = fields[0...split]
+			@second_stop.fields = fields[0...split]
 		end
 
 		def inspect
