@@ -14,9 +14,7 @@ module NJTMap
 				throw DateOutOfRangeError.new
 			end
 
-			# Log.info("log")
-			# Log.debug("debug")
-			# Log.fatal("fatal")
+			Log.info { inspect }
 		end
 
 		def positions
