@@ -4,8 +4,14 @@ require 'chronic'
 require 'pp'
 require './lib/snapshot.rb'
 
+if ARGV.delete("--debug")
+	NJTMap.log_level = NJTMap::Logger::INFO
+end
+
 date_str = ARGV[0] || "now"
 date = Chronic.parse(date_str)
+
+
 positions = NJTMap::Snapshot.new(date).positions
 
 pp positions

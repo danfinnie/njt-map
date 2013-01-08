@@ -13,6 +13,10 @@ module NJTMap
 			unless @service_ids = DB.find_service_ids_for_time(@date)
 				throw DateOutOfRangeError.new
 			end
+
+			# Log.info("log")
+			# Log.debug("debug")
+			# Log.fatal("fatal")
 		end
 
 		def positions
