@@ -25,7 +25,7 @@ The schema used for the gtfs.db sqlite database is what you would expect given t
 Station Waiting Time
 --------------------
 
-In using the data, it became clear that the data's stop_times.txt file does not use arrival_time and depature_time as intended by the GTFS specification.  Instead, arrival_time is always equal to departure_time.  To represent a trip stop with a wait, the data has 2 subsequent stops at the same stop_id.  These rows in stop_time can be found by the following query:
+In using the data, it became clear that the data's stop_times.txt file does not use arrival_time and depature_time as intended by the GTFS specification.  Instead, arrival_time is always equal to departure_time.  To represent a trip stop with a wait, the data has 2 subsequent stops at the same stop_id.  These rows in stop_time can be found by the following queries:
 
     select *
     from stop_times a, stop_times b
