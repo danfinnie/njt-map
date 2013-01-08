@@ -1,4 +1,6 @@
 require 'arrayfields'
+
+require File.join(File.dirname(__FILE__), "njtmap.rb")
 require File.join(File.dirname(__FILE__), "database.rb")
 
 # A VehiclePosition represents the progress of a vehicle between 2 stops.

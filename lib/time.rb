@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__), "njtmap.rb")
+
 module NJTMap
 	class Time < ::Time
 		def self.from_time o

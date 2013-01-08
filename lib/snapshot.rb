@@ -1,6 +1,6 @@
+require File.join(File.dirname(__FILE__), "njtmap.rb")
 require File.join(File.dirname(__FILE__), "time.rb")
 require File.join(File.dirname(__FILE__), "database.rb")
-require File.join(File.dirname(__FILE__), "exceptions.rb")
 require File.join(File.dirname(__FILE__), "vehicle_position.rb")
 
 # A Snapshot represents an instance in time and that time's current transit positions.
