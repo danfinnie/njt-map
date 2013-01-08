@@ -21,3 +21,25 @@ The schema used for the gtfs.db sqlite database is what you would expect given t
 * All latitudes and longitudes are stored as strings so that no precision is lost converting to IEEE floats.
 * The agencies file is not imported.  We are only dealing with one agency (NJ Transit).  NJ Transit divides itself into 2 agencies, one for bus and one for rail, however this distinction is also made by the `route_type` field in the `routes.txt` file.
 * Arrival and depature times in GTFS are stored in the format `hh:mm:ss` as time past noon minus 12 hours ([more info](https://developers.google.com/transit/gtfs/reference#stop_times_fields)).  For easier searching, we convert these values to an integer representing seconds from the same time.  So `13:05:20` becomes `13*60*60 + 5*60 + 20 = 47,120`.
+
+Station Waiting Time
+--------------------
+
+In using the data, it became clear that the data's stop_times.txt file does not use arrival_time and depature_time as intended by the GTFS specification.  Instead, arrival_time is always equal to departure_time.  To represent a trip stop with a wait, the data has 2 subsequent stops at the same stop_id.  These rows in stop_time can be found by the following query:
+
+    select *
+    from stop_times a, stop_times b
+    where a.trip_id = b.trip_id
+    and a.stop_sequence + 1 = b.stop_sequence
+    and a.stop_id = b.stop_id
+    order by a.trip_id;
+
+Or:
+
+    select *
+    from stop_times
+    where shape_dist_traveled = 0
+    and stop_sequence > 1
+    order by trip_id;
+
+This data is not cleaned on import, instead the distance calculation code was designed to gracefully handle distances of 0.  
