@@ -18,10 +18,8 @@ module NJTMap
 		end
 
 		def positions
-			VehiclePosition.for_services_and_time(@service_ids, @seconds_into_day)
-			# [@date, @service_id, @seconds_into_day]
+			VehiclePosition.for_services_and_time(@service_ids, @seconds_into_day).each \
+				{ |vehicle_position| p vehicle_position; p vehicle_position.location_at_time(@seconds_into_day); puts "" }
 		end
-
-		private
 	end
 end

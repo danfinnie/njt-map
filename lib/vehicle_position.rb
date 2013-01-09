@@ -52,17 +52,10 @@ module NJTMap
 			"#<#{self.class}:0x#{object_id.to_s(16)} #{@trip.trip_headsign} btwn #{@first_stop.stop_name } and #{@second_stop.stop_name}>"
 		end
 
-		private
-		def trip_name
-			DB.get_first_value("select trip_headsign from trips where trip_id=?", @first_stop[:trip_id])
-		end
-
-		def first_stop_name
-			DB.get_first_value("select stop_name from stops where stop_id=?", @first_stop[:stop_id])
-		end
-
-		def second_stop_name
-			DB.get_first_value("select stop_name from stops where stop_id=?", @second_stop[:stop_id])
+		def location_at_time(t)
+			fraction_complete = (t - @first_stop_time.departure_time).to_f / (@second_stop_time.departure_time - @first_stop_time.departure_time)
+			dist_traveled = fraction_complete * (@second_stop_time.shape_dist_traveled - @first_stop_time.shape_dist_traveled) + @first_stop_time.shape_dist_traveled
+			@trip.polyline_for_distance(dist_traveled)
 		end
 	end
 end

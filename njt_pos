@@ -11,6 +11,4 @@ end
 date_str = ARGV[0] || "now"
 date = Chronic.parse(date_str)
 
-positions = NJTMap::Snapshot.new(date).positions
-
-pp positions
+NJTMap::Snapshot.new(date).positions
