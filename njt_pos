@@ -12,13 +12,14 @@ date_str = ARGV[0] || "now"
 date = Chronic.parse(date_str)
 
 snapshot = NJTMap::Snapshot.new(date)
-puts snapshot.positions.map { |pos| 
-	loc = pos.location_at_time(snapshot.seconds_into_day)
-	{
-		from: pos.first_stop.stop_name,
-		to: pos.second_stop.stop_name,
-		trip: pos.trip.trip_headsign,
-		lat: loc.y,
-		lon: loc.x,
+puts ({locs: snapshot.positions.map { |pos|
+		loc = pos.location_at_time(snapshot.seconds_into_day)
+		{
+			from: pos.first_stop.stop_name,
+			to: pos.second_stop.stop_name,
+			trip: pos.trip.trip_headsign,
+			lat: loc.y,
+			lon: loc.x,
+		}
 	}
-}.to_json
+}).to_json
