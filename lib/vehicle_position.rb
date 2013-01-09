@@ -20,6 +20,8 @@ module NJTMap
 			[Trip, :@trip],
 		]
 
+		attr_reader :trip, :second_stop, :first_stop
+
 		def self.for_services_and_time(service_ids, time)
 			resp = DB.execute("
 				select *

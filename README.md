@@ -9,7 +9,7 @@ How do I use it?
 
 1. Install Ruby 1.9 and the following gems:
     * sqlite3
-    * arrayfields
+    * json
 1. Sign up for a NJ Transit developer account from [their developer site](https://www.njtransit.com/mt/mt_servlet.srv?hdnPageAction=MTDevLoginTo).  Download the rail and bus files they provide and unzip them into this directory.
 1. Run `make`.  This will create the `gtfs.db` file that contains all of the information from the files you downloaded and print status updates along the way.  As of December 2012 there are 13 million rows to be inserted into the table, you can use this to gauge the script's progress -- it took almost 3 hours on my machine.
 

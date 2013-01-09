@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby19
 
 require 'chronic'
-require 'pp'
+require 'json'
 require './lib/snapshot.rb'
 
 if ARGV.delete("--debug")
@@ -12,7 +12,13 @@ date_str = ARGV[0] || "now"
 date = Chronic.parse(date_str)
 
 snapshot = NJTMap::Snapshot.new(date)
-snapshot.positions.each do |vehicle_position| 
-	loc = vehicle_position.location_at_time(snapshot.seconds_into_day)
-	p loc
-end
+puts snapshot.positions.map { |pos| 
+	loc = pos.location_at_time(snapshot.seconds_into_day)
+	{
+		from: pos.first_stop.stop_name,
+		to: pos.second_stop.stop_name,
+		trip: pos.trip.trip_headsign,
+		lat: loc.y,
+		lon: loc.x,
+	}
+}.to_json
