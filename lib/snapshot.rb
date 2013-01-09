@@ -18,8 +18,9 @@ module NJTMap
 		end
 
 		def positions
-			VehiclePosition.for_services_and_time(@service_ids, @seconds_into_day).each \
-				{ |vehicle_position| p vehicle_position; p vehicle_position.location_at_time(@seconds_into_day); puts "" }
+			VehiclePosition.for_services_and_time(@service_ids, @seconds_into_day)
 		end
+
+		attr_reader :seconds_into_day
 	end
 end

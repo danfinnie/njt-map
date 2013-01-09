@@ -11,4 +11,8 @@ end
 date_str = ARGV[0] || "now"
 date = Chronic.parse(date_str)
 
-NJTMap::Snapshot.new(date).positions
+snapshot = NJTMap::Snapshot.new(date)
+snapshot.positions.each do |vehicle_position| 
+	loc = vehicle_position.location_at_time(snapshot.seconds_into_day)
+	p loc
+end
