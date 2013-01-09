@@ -4,5 +4,6 @@ rail_data
 .DS_Store
 njt-map.sublime*
 web/data.json
+web/data.json.new
 gtfs.db
 gtfs.db-journal
