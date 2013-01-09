@@ -29,7 +29,7 @@ module NJTMap
 		end
 
 		def inspect
-			"<Location #{x}, #{y}>"
+			"<Location #{y}, #{x}>"
 		end
 	end
 end
