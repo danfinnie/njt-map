@@ -27,7 +27,6 @@
         dataGatherer = window.setInterval(function() {
           var cacheBuster = Math.floor(Math.random()*10000) + "";
           $.get("data.json", cacheBuster, function(data, textStatus, jqXhr) {
-            console.log("got data");
             nextMarkers = [];
             $.each(data.locs, function() {
               nextMarkers.push(
@@ -38,13 +37,11 @@
               );
             });
 
-            console.log("clear map");
             $.each(currentMarkers, function() {
               this.setMap(null);
             });
             currentMarkers = nextMarkers;
 
-            console.log("populate map");
             $.each(nextMarkers, function() {
               this.setMap(map);
             });
