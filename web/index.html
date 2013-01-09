@@ -21,16 +21,35 @@
         };
 
         var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+        var currentMarkers = []
+        var nextMarkers = []
 
-        $.get("data.json", function(data, textStatus, jqXhr) {
-          $.each(data.locs, function() {
-            var marker = new google.maps.Marker({
-              position: new google.maps.LatLng(this.lat, this.lon),
-              title: this.trip + " btwn " + this.from + " and " + this.to
+        dataGatherer = window.setInterval(function() {
+          var cacheBuster = Math.floor(Math.random()*10000) + "";
+          $.get("data.json", cacheBuster, function(data, textStatus, jqXhr) {
+            console.log("got data");
+            nextMarkers = [];
+            $.each(data.locs, function() {
+              nextMarkers.push(
+                new google.maps.Marker({
+                  position: new google.maps.LatLng(this.lat, this.lon),
+                  title: this.trip + " btwn " + this.from + " and " + this.to
+                })
+              );
             });
-            marker.setMap(map);
-          });
-        }, "json");
+
+            console.log("clear map");
+            $.each(currentMarkers, function() {
+              this.setMap(null);
+            });
+            currentMarkers = nextMarkers;
+
+            console.log("populate map");
+            $.each(nextMarkers, function() {
+              this.setMap(map);
+            });
+          }, "json");
+        }, 2500);
       }
     </script>
   </body>
