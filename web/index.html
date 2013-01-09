@@ -20,18 +20,17 @@
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
 
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
-            mapOptions);
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 
-            $.get("data.json", function(data, textStatus, jqXhr) {
-              $.each(data.locs, function() {
-                var marker = new google.maps.Marker({
-                  position: new google.maps.LatLng(this.lat, this.lon),
-                  title: this.trip + " btwn " + this.from + " and " + this.to
-                });
-                marker.setMap(map);
-              });
-            }, "json");
+        $.get("data.json", function(data, textStatus, jqXhr) {
+          $.each(data.locs, function() {
+            var marker = new google.maps.Marker({
+              position: new google.maps.LatLng(this.lat, this.lon),
+              title: this.trip + " btwn " + this.from + " and " + this.to
+            });
+            marker.setMap(map);
+          });
+        }, "json");
       }
     </script>
   </body>
