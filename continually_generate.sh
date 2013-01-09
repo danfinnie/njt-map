@@ -1,3 +1,5 @@
+trap "rm -f web/data.json.new" EXIT
+
 while :
 do
 	./njt_pos > web/data.json.new
