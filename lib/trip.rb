@@ -8,6 +8,8 @@ module NJTMap
 			@route_id, @service_id, @trip_id, @trip_headsign, @direction_id, @block_id, @shape_id = route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id
 		end
 
+		attr_reader :route_id, :service_id, :trip_id, :trip_headsign, :direction_id, :block_id, :shape_id
+
 		# Return the shape points before and after the passed dist_travelled
 		@@polyline_for_distance_stmt = DB.prepare('
 			select *
@@ -32,6 +34,8 @@ module NJTMap
 			prev_shape.find_intermediary(next_shape, fraction_complete)
 		end
 
-		attr_reader :route_id, :service_id, :trip_id, :trip_headsign, :direction_id, :block_id, :shape_id
+		def time_hash
+			trip_id.hash
+		end
 	end
 end
