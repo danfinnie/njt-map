@@ -3,6 +3,7 @@
 require 'chronic'
 require 'json'
 require './lib/snapshot.rb'
+require './lib/hash.rb'
 
 if ARGV.delete("--debug")
 	NJTMap.log_level = NJTMap::Logger::INFO
@@ -20,6 +21,7 @@ puts ({locs: snapshot.positions.map { |pos|
 			trip: pos.trip.trip_headsign,
 			lat: loc.y,
 			lon: loc.x,
+			hash: NJTMap::Hash.new(pos.time_hash),
 		}
 	}
 }).to_json

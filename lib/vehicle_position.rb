@@ -59,5 +59,9 @@ module NJTMap
 			dist_traveled = fraction_complete * (@second_stop_time.shape_dist_traveled - @first_stop_time.shape_dist_traveled) + @first_stop_time.shape_dist_traveled
 			@trip.polyline_for_distance(dist_traveled)
 		end
+
+		def time_hash
+			trip.time_hash
+		end
 	end
 end
