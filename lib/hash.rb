@@ -10,7 +10,6 @@ module NJTMap
 		end
 
 		def to_json a
-			p a
 			@hash.to_s(32).downcase.to_json
 		end
 	end
