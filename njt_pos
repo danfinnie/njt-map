@@ -3,7 +3,6 @@
 require 'chronic'
 require 'json'
 require './lib/snapshot.rb'
-require './lib/hash.rb'
 
 if ARGV.delete("--debug")
 	NJTMap.log_level = NJTMap::Logger::INFO
