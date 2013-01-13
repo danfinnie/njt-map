@@ -8,6 +8,11 @@ if ARGV.delete("--debug")
 	NJTMap.log_level = NJTMap::Logger::INFO
 end
 
+if ARGV.delete("--profile")
+	require 'profile'
+	$stdout = File.new("/dev/null", "w", autoclose: true)
+end
+
 date_str = ARGV[0] || "now"
 date = Chronic.parse(date_str)
 
