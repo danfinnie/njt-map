@@ -23,7 +23,7 @@ module NJTMap
 		attr_reader :trip, :second_stop, :first_stop
 
 		def self.for_services_and_time(service_ids, time)
-			resp = DB.execute("
+			q = "
 				select *
 				from stop_times first_stop
 				join stop_times second_stop on (
@@ -36,9 +36,17 @@ module NJTMap
 				where first_stop.trip_id in (select trip_id from trips where service_id in (#{service_ids.join(',')}))
 				and first_stop.departure_time < :time 
 				and second_stop.departure_time > :time
-			;", time: time)
+			;"
+			params = {time: time}
 
-			resp.map { |row| new(row) }
+			if block_given?
+				DB.execute(q, params) do |row|
+					yield(new(row))
+				end
+			else
+				resp = DB.execute(q, params)
+				resp.map { |row| new(row) }
+			end
 		end
 
 		def initialize(row)

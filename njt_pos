@@ -23,7 +23,7 @@ date =	if ARGV.length > 0
 snapshot = NJTMap::Snapshot.new(date)
 print '{"locs":['
 delim = ''
-snapshot.positions.each do |pos|
+snapshot.positions do |pos|
 	print delim
 	delim = ','
 	loc = pos.location_at_time(snapshot.seconds_into_day)
