@@ -23,7 +23,9 @@ module NJTMap
 		attr_reader :trip, :second_stop, :first_stop
 
 		def self.for_services_and_time(service_ids, time)
-			q = "
+			raise ArgumentError.new("Please pass a block") unless block_given?
+
+			DB.execute("
 				select *
 				from stop_times first_stop
 				join stop_times second_stop on (
@@ -36,16 +38,8 @@ module NJTMap
 				where first_stop.trip_id in (select trip_id from trips where service_id in (#{service_ids.join(',')}))
 				and first_stop.departure_time < :time 
 				and second_stop.departure_time > :time
-			;"
-			params = {time: time}
-
-			if block_given?
-				DB.execute(q, params) do |row|
-					yield(new(row))
-				end
-			else
-				resp = DB.execute(q, params)
-				resp.map { |row| new(row) }
+			;", {time: time}) do |row|
+				yield(new(row))
 			end
 		end
 
