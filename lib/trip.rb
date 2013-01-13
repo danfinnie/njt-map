@@ -33,9 +33,5 @@ module NJTMap
 			fraction_complete = (dist_travelled - prev_shape.shape_dist_traveled) / (next_shape.shape_dist_traveled - prev_shape.shape_dist_traveled)
 			prev_shape.find_intermediary(next_shape, fraction_complete)
 		end
-
-		def time_hash
-			trip_id.hash
-		end
 	end
 end
