@@ -33,7 +33,7 @@ module NJTMap
 				join stops first_stop_info on first_stop_info.stop_id = first_stop.stop_id
 				join stops second_stop_info on second_stop_info.stop_id = second_stop.stop_id
 				join trips on trips.trip_id = first_stop.trip_id
-				where first_stop.trip_id in (select trip_id from trips where service_id in (#{service_ids.join(',')}))
+				where trips.service_id in (#{service_ids.join(',')})
 				and first_stop.departure_time < :time 
 				and second_stop.departure_time > :time
 			;", time: time)
