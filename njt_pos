@@ -13,8 +13,12 @@ if ARGV.delete("--profile")
 	$stdout = File.new("/dev/null", "w", autoclose: true)
 end
 
-date_str = ARGV[0] || "now"
-date = Chronic.parse(date_str)
+date =	if ARGV.length > 0
+			date_str = ARGV[0]
+			Chronic.parse(date_str)
+		else
+			Time.now
+		end
 
 snapshot = NJTMap::Snapshot.new(date)
 puts ({locs: snapshot.positions.map { |pos|
