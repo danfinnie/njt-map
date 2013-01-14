@@ -17,8 +17,8 @@ module NJTMap
 			Log.info { inspect }
 		end
 
-		def positions
-			VehiclePosition.for_services_and_time(@service_ids, @seconds_into_day)
+		def positions(&blk)
+			VehiclePosition.for_services_and_time(@service_ids, @seconds_into_day, &blk)
 		end
 
 		attr_reader :seconds_into_day

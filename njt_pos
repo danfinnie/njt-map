@@ -21,15 +21,19 @@ date =	if ARGV.length > 0
 		end
 
 snapshot = NJTMap::Snapshot.new(date)
-puts ({locs: snapshot.positions.map { |pos|
-		loc = pos.location_at_time(snapshot.seconds_into_day)
-		{
-			from: pos.first_stop.stop_name,
-			to: pos.second_stop.stop_name,
-			trip: pos.trip.trip_headsign,
-			lat: loc.y,
-			lon: loc.x,
-			trip_id: pos.trip.trip_id,
-		}
-	}
-}).to_json
+print '{"locs":['
+delim = ''
+snapshot.positions do |pos|
+	print delim
+	delim = ','
+	loc = pos.location_at_time(snapshot.seconds_into_day)
+	print ({
+		from: pos.first_stop.stop_name,
+		to: pos.second_stop.stop_name,
+		trip: pos.trip.trip_headsign,
+		lat: loc.y,
+		lon: loc.x,
+		trip_id: pos.trip.trip_id,
+	}).to_json
+end
+print ']}'
