@@ -2,6 +2,7 @@
 
 require 'sqlite3'
 require 'csv'
+require 'arrayfields'
 
 def open_bus_and_rail(filename, &blk)
 	process_csv = proc { |id_mask, f|
@@ -31,8 +32,8 @@ def open_bus_and_rail(filename, &blk)
 	File.open("rail_data/#{filename}.txt", "r:UTF-8", &process_csv[1 << 31])
 end
 
-def inc_insert_count
-	$insert_count += 1
+def inc_insert_count(n=1)
+	$insert_count += n
  	if $insert_count % 1000 == 0
 		puts "#{$insert_count} rows inserted"
 	end
@@ -89,4 +90,25 @@ open_bus_and_rail("stop_times") do |post_process, values|
 		$stderr.puts "row: #{values.inspect}"
 		raise $!
 	end
+end
+
+# Add fields for shape start and end relevancy
+select_stmt = db.prepare("select * from shapes where shape_id=? order by shape_pt_sequence")
+update_stmt = db.prepare("update shapes set start_relevancy=?, end_relevancy=? where shape_id=? and shape_pt_sequence=?")
+fields = [:shape_id, :shape_pt_lat, :shape_pt_lon, :shape_pt_sequence, :shape_dist_traveled, :start_relevancy, :end_relevancy]
+shape_ids = db.execute("select distinct shape_id from shapes") do |*shape_id|
+	shape_id = shape_id[0][0].to_i
+	puts "exec #{shape_id}"
+	# db.transaction do
+		shape_data = select_stmt.execute!(shape_id)
+		shape_data.each {|x| x.fields = fields }
+
+		shape_data.each_cons(3) do |early, current, late|
+			update_stmt.execute(early[:shape_dist_traveled], late[:shape_dist_traveled], current[:shape_id], current[:shape_pt_sequence])
+		end
+
+		update_stmt.execute(0, shape_data.first[:shape_dist_traveled], shape_id, shape_data.first[:shape_pt_sequence])
+		update_stmt.execute(shape_data[-2][:shape_dist_traveled], shape_data[-1][:shape_dist_traveled], shape_id, shape_data[-1][:shape_pt_sequence])
+		inc_insert_count(shape_data.length)
+	# end
 end
