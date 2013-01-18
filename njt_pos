@@ -27,6 +27,7 @@ snapshot.positions do |pos|
 	print delim
 	delim = ','
 	loc = pos.location_at_time(snapshot.seconds_into_day)
+
 	print ({
 		from: pos.first_stop.stop_name,
 		to: pos.second_stop.stop_name,

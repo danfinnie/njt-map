@@ -11,6 +11,8 @@ module NJTMap
 		# fraction_complete is a number between 0 and 1, inclusive, representing
 		# the percentage of distance travaled from this to o.
 		def find_intermediary(o, fraction_complete)
+			return self if fraction_complete == 1 || self == o
+
 			m = (o.y - self.y) / (o.x - self.x)
 			new_x = new_y = (0/0.0) # NaN
 
