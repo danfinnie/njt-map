@@ -34,7 +34,7 @@ end
 
 def inc_insert_count(n=1)
 	$insert_count += n
- 	if $insert_count % 1000 == 0
+ 	if $insert_count % 10_000 == 0
 		puts "#{$insert_count} rows inserted"
 	end
 end
