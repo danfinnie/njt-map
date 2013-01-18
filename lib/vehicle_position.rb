@@ -15,9 +15,9 @@ module NJTMap
 		ORM = [
 			[StopTime, :@first_stop_time],
 			[StopTime, :@second_stop_time],
+			[Trip, :@trip],
 			[Stop, :@first_stop],
 			[Stop, :@second_stop],
-			[Trip, :@trip],
 		]
 
 		attr_reader :trip, :second_stop, :first_stop
@@ -32,9 +32,9 @@ module NJTMap
 				  first_stop.stop_sequence+1=second_stop.stop_sequence
 				  and first_stop.trip_id = second_stop.trip_id
 				)
+				join trips on trips.trip_id = first_stop.trip_id
 				join stops first_stop_info on first_stop_info.stop_id = first_stop.stop_id
 				join stops second_stop_info on second_stop_info.stop_id = second_stop.stop_id
-				join trips on trips.trip_id = first_stop.trip_id
 				where trips.service_id in (#{service_ids.join(',')})
 				and first_stop.departure_time < :time 
 				and second_stop.departure_time > :time
