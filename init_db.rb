@@ -40,6 +40,8 @@ def inc_insert_count(n=1)
 end
 
 db = SQLite3::Database.new("gtfs.db")
+db.execute("PRAGMA synchronous=OFF");
+db.execute("PRAGMA journal_mode=MEMORY");
 $insert_count = 0
 
 # Prepared statements, indexed by table name, for inserting fields.
