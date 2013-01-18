@@ -42,6 +42,12 @@ end
 db = SQLite3::Database.new("gtfs.db")
 db.execute("PRAGMA synchronous=OFF");
 db.execute("PRAGMA journal_mode=MEMORY");
+db.execute("begin transaction")
+
+at_exit do
+	db.execute("commit")
+end
+
 $insert_count = 0
 
 # Prepared statements, indexed by table name, for inserting fields.
