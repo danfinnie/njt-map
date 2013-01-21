@@ -5,5 +5,4 @@ rail_data
 njt-map.sublime*
 web/data.json
 web/data.json.new
-gtfs.db
-gtfs.db-journal
+gtfs.db*
