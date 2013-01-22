@@ -144,7 +144,7 @@ int main(int argc, char** args)
         second_dist_traveled = sqlite3_column_double(main_stmt, 8);
         shape_id = sqlite3_column_int64(main_stmt, 4);
         
-        fraction_complete = (seconds_into_day - first_dept_time) / (second_dept_time - first_dept_time);
+        fraction_complete = (seconds_into_day - first_dept_time) * 1.0 / (second_dept_time - first_dept_time);
         dist_traveled = fraction_complete * (second_dist_traveled - first_dist_traveled) + first_dist_traveled;
 
         printf("%s", "{\"from\":\"");
