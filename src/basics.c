@@ -140,15 +140,15 @@ int main(int argc, char** args)
         putchar(delim);
         delim = ',';
 
-        first_dept_time = sqlite3_column_int64(main_stmt, 4);
-        second_dept_time = sqlite3_column_int64(main_stmt, 5);
-        first_dist_traveled = sqlite3_column_double(main_stmt, 6);
-        second_dist_traveled = sqlite3_column_double(main_stmt, 7);
+        first_dept_time = sqlite3_column_int64(main_stmt, 5);
+        second_dept_time = sqlite3_column_int64(main_stmt, 6);
+        first_dist_traveled = sqlite3_column_double(main_stmt, 7);
+        second_dist_traveled = sqlite3_column_double(main_stmt, 8);
         shape_id = sqlite3_column_int64(main_stmt, 4);
 
         if (shape_id != 2147483671)
             continue;
-        
+
         fraction_complete = (seconds_into_day - first_dept_time) / (second_dept_time - first_dept_time);
         dist_traveled = fraction_complete * (second_dist_traveled - first_dist_traveled) + first_dist_traveled;
 
