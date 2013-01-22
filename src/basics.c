@@ -125,7 +125,10 @@ int main(int argc, char** args)
         exit(1);
     }
 
-    // printf("Date is %s, time is %lld.\n", date, seconds_into_day);
+    #ifdef DEBUG
+    printf("Date is %s, time is %lld.\n", date, seconds_into_day);
+    #endif
+
     sqlite3_bind_text(main_stmt, 1, date, -1, SQLITE_STATIC);
     sqlite3_bind_int(main_stmt, 2, seconds_into_day);
 
@@ -134,7 +137,16 @@ int main(int argc, char** args)
     char delim = ' ';
     double lat, lon, dist_traveled, fraction_complete, second_dist_traveled, first_dist_traveled;
     int64_t shape_id, first_dept_time, second_dept_time;
+
+    #ifdef DEBUG
+    int n = 0;
+    #endif
     while(SQLITE_ROW == sqlite3_step(main_stmt)) {
+        #ifdef DEBUG
+        n++;
+        if (n > 5) break;
+        #endif
+
         putchar(delim);
         delim = ',';
 
@@ -155,8 +167,19 @@ int main(int argc, char** args)
         printf("%s", (const char *) sqlite3_column_text(main_stmt, 2));
         printf("%s", "\",\"trip_id\":");
         printf("%lld", sqlite3_column_int64(main_stmt, 3));
+
+        #ifdef DEBUG
+        printf(",\"dist_traveled\":%f,\"fraction_complete\":%f", fraction_complete, dist_traveled);
+        #endif
+
+        // Calculate here so we get some debugging info if this call fails.
         calc_lat_lon(shape_id, dist_traveled, &lat, &lon);
+
+        #ifdef DEBUG
+        printf(",\"lat\":%f,\"lon\":%f}\n", lat, lon);
+        #else
         printf(",\"lat\":%f,\"lon\":%f}", lat, lon);
+        #endif
     }
     puts("]}");
 
