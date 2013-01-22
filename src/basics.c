@@ -37,17 +37,17 @@ int main(int argc, char** args)
         "join trips on trips.trip_id = first_stop.trip_id "
         "join stops first_stop_info on first_stop_info.stop_id = first_stop.stop_id "
         "join stops second_stop_info on second_stop_info.stop_id = second_stop.stop_id "
-        "where trips.service_id in (select service_id from calendar_dates where date=\"20130121\") "
-        "and first_stop.departure_time < 74096  "
-        "and second_stop.departure_time > 74096 "
+        "where trips.service_id in (select service_id from calendar_dates where date=?1) "
+        "and first_stop.departure_time < ?2  "
+        "and second_stop.departure_time > ?2 "
         ,-1, &stmt, NULL)) {
         printf("%s", "Error preparing main SQL statement.");
         exit(1);
     }
 
     printf("Date is %s, time is %ld.\n", date, seconds_into_day);
-    // sqlite3_bind_text(stmt, 1, date, -1, SQLITE_STATIC);
-    // sqlite3_bind_int(stmt, 2, seconds_into_day);
+    sqlite3_bind_text(stmt, 1, date, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, seconds_into_day);
 
     printf("{\"locs\": [");
     fflush(stdout);
