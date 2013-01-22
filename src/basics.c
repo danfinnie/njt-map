@@ -125,7 +125,7 @@ int main(int argc, char** args)
         exit(1);
     }
 
-    printf("Date is %s, time is %lld.\n", date, seconds_into_day);
+    // printf("Date is %s, time is %lld.\n", date, seconds_into_day);
     sqlite3_bind_text(main_stmt, 1, date, -1, SQLITE_STATIC);
     sqlite3_bind_int(main_stmt, 2, seconds_into_day);
 
