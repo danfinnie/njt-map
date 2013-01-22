@@ -18,14 +18,14 @@ int main(int argc, char** args)
     time_t now_time_t = time(NULL);
     char date[9];
     struct tm* now_tm;
-    now_tm = gmtime(&now_time_t);
+    now_tm = localtime(&now_time_t);
     strftime(date, 100, "%Y%m%d", now_tm);
 
     now_tm->tm_hour = 12;
     now_tm->tm_min = 0;
     now_tm->tm_sec = 0;
 
-    int64_t seconds_into_day = now_time_t - (mktime(now_tm) - 12*60*60);
+    long seconds_into_day = now_time_t - (mktime(now_tm) - 12*60*60);
 
     if(sqlite3_prepare_v2(handle, 
         "select first_stop_info.stop_name, first_stop_info.stop_name, trips.trip_headsign, trips.trip_id "
@@ -45,7 +45,7 @@ int main(int argc, char** args)
         exit(1);
     }
 
-    printf("Date is %s, time is %lld, param is %d.\n", date, seconds_into_day, sqlite3_bind_parameter_index(stmt, "date"));
+    printf("Date is %s, time is %ld.\n", date, seconds_into_day);
     sqlite3_bind_text(stmt, 1, date, -1, SQLITE_STATIC);
     sqlite3_bind_int(stmt, 2, seconds_into_day);
 
