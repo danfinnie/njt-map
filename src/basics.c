@@ -15,6 +15,8 @@ struct shape_pt {
 static void find_intermediary(const struct shape_pt * prev_shape, const struct shape_pt * next_shape, const double fraction_complete, double *lat, double *lon) {
     double m, delta_y, delta_x;
     // x = longitude
+    // o = next shape
+    // self = prev_shape
 
     if (fraction_complete == 1 || (prev_shape->lat == next_shape->lat && prev_shape->lon == next_shape->lon)) {
         *lat = prev_shape->lat;
@@ -22,11 +24,9 @@ static void find_intermediary(const struct shape_pt * prev_shape, const struct s
         return;
     }
 
-    delta_y = prev_shape->lat - next_shape->lat;
-    delta_x = prev_shape->lon - prev_shape->lon;
-    m = delta_y / delta_x;
-    delta_y = fabs(delta_y);
-    delta_x = fabs(delta_x);
+    delta_y = fabs(prev_shape->lat - next_shape->lat);
+    delta_x = fabs(prev_shape->lon - prev_shape->lon);
+    m = (next_shape->lat - prev_shape->lat) * 1.0 / (next_shape->lon - prev_shape->lon);
 
     if (isnan(m) || isinf(m)) {
         *lon = prev_shape->lon;
@@ -49,7 +49,7 @@ static void calc_lat_lon(int64_t shape_id, double dist_traveled, double *lat, do
             "where shape_id = ?1 "
             "and (start_relevancy < ?2 or start_relevancy = 0)"
             "and end_relevancy >= ?2 "
-            "order by shape_pt_sequence asc "
+            "order by shape_pt_sequence desc "
             "limit 2"
             ,-1, &lat_lon_stmt, NULL)) {
             printf("%s", "Error preparing lat lon SQL statement");
@@ -108,6 +108,7 @@ int main(int argc, char** args)
     int64_t seconds_into_day = now_time_t - (mktime(now_tm) - 12*60*60);
 
     if(sqlite3_prepare_v2(handle, 
+        // TODO: Handle midnight switchover appropriately.
         "select first_stop_info.stop_name, second_stop_info.stop_name, trips.trip_headsign, trips.trip_id, trips.shape_id, first_stop.departure_time, second_stop.departure_time, first_stop.shape_dist_traveled, second_stop.shape_dist_traveled "
         "from stop_times first_stop "
         "join stop_times second_stop on ( "
@@ -118,7 +119,7 @@ int main(int argc, char** args)
         "join stops first_stop_info on first_stop_info.stop_id = first_stop.stop_id "
         "join stops second_stop_info on second_stop_info.stop_id = second_stop.stop_id "
         "where trips.service_id in (select service_id from calendar_dates where date=?1) "
-        "and first_stop.departure_time < ?2  "
+        "and first_stop.departure_time <= ?2  "
         "and second_stop.departure_time > ?2 "
         ,-1, &main_stmt, NULL)) {
         printf("%s", "Error preparing main SQL statement.");
