@@ -25,43 +25,46 @@ int main(int argc, char** args)
     now_tm->tm_min = 0;
     now_tm->tm_sec = 0;
 
-    long seconds_into_day = now_time_t - (mktime(now_tm) - 12*60*60);
+    int64_t seconds_into_day = now_time_t - (mktime(now_tm) - 12*60*60);
 
-    // Calculate service IDs into a comma separated string.
-    char service_ids[400] = {'\0'};
-    int newlen;
-    sqlite3_stmt * service_id_stmt;
-    if(sqlite3_prepare_v2(handle, "select service_id from calendar_dates where date=?", -1, &service_id_stmt, 0)) {
-        printf("Could not extract service ids for date %s and time %ld.\n", date, seconds_into_day);
-        return -1;
+    if(sqlite3_prepare_v2(handle, 
+        "select first_stop_info.stop_name, first_stop_info.stop_name, trips.trip_headsign, trips.trip_id "
+        "from stop_times first_stop "
+        "join stop_times second_stop on ( "
+          "first_stop.stop_sequence+1=second_stop.stop_sequence "
+          "and first_stop.trip_id = second_stop.trip_id "
+        ") "
+        "join trips on trips.trip_id = first_stop.trip_id "
+        "join stops first_stop_info on first_stop_info.stop_id = first_stop.stop_id "
+        "join stops second_stop_info on second_stop_info.stop_id = second_stop.stop_id "
+        "where trips.service_id in (select service_id from calendar_dates where date=?1) "
+        "and first_stop.departure_time < ?2  "
+        "and second_stop.departure_time > ?2 "
+        ,-1, &stmt, NULL)) {
+        printf("%s", "Error preparing main SQL statement.");
+        exit(1);
     }
-    sqlite3_bind_text(service_id_stmt, 1, date, 8, SQLITE_TRANSIENT);
-    while(SQLITE_ROW == sqlite3_step(service_id_stmt)) {
-        newlen = strlcat(service_ids, (const char*) sqlite3_column_text(service_id_stmt, 0), 400-2);
-        service_ids[newlen++] = ',';
-        service_ids[newlen] = '\0';
+
+    printf("Date is %s, time is %lld, param is %d.\n", date, seconds_into_day, sqlite3_bind_parameter_index(stmt, "date"));
+    sqlite3_bind_text(stmt, 1, date, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, seconds_into_day);
+
+    printf("{\"locs\": [");
+    char delim = ' ';
+    while(SQLITE_ROW == sqlite3_step(stmt)) {
+        putchar(delim);
+        delim = ',';
+
+        printf("%s", "{\"from\":\"");
+        printf("%s", (const char *) sqlite3_column_text(stmt, 0));
+        printf("%s", "\",\"to\":\"");
+        printf("%s", (const char *) sqlite3_column_text(stmt, 1));
+        printf("%s", "\",\"trip\":\"");
+        printf("%s", (const char *) sqlite3_column_text(stmt, 2));
+        printf("\",\"trip_id\":%d}", sqlite3_column_int(stmt, 3));
     }
-    service_ids[newlen-1] = '\0'; // Remove trailing comma.
+    puts("]}");
 
-    printf("%s", service_ids);
-
-    // printf("%s\n", date);
-    // printf("%lu", seconds_into_day);
-
-    // if(sqlite3_prepare_v2(handle, 
-    //     "select *"
-    //             from stop_times first_stop
-    //             join stop_times second_stop on (
-    //               first_stop.stop_sequence+1=second_stop.stop_sequence
-    //               and first_stop.trip_id = second_stop.trip_id
-    //             )
-    //             join trips on trips.trip_id = first_stop.trip_id
-    //             join stops first_stop_info on first_stop_info.stop_id = first_stop.stop_id
-    //             join stops second_stop_info on second_stop_info.stop_id = second_stop.stop_id
-    //             where trips.service_id in (#{service_ids.join(',')})
-    //             and first_stop.departure_time < :time 
-    //             and second_stop.departure_time > :time
-    //     -1))
     
     // Close the handle to free memory
     sqlite3_close(handle);
