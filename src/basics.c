@@ -96,7 +96,7 @@ int main(int argc, char** args)
 
     // Calculate date offsets
     time_t now_time_t = time(NULL);
-    char date[9] = {'2', '0', '1', '3', '0', '1', '2', '1'};
+    char date[9];
     struct tm* now_tm;
     now_tm = localtime(&now_time_t);
     strftime(date, 100, "%Y%m%d", now_tm);
@@ -106,9 +106,6 @@ int main(int argc, char** args)
     now_tm->tm_sec = 0;
 
     int64_t seconds_into_day = now_time_t - (mktime(now_tm) - 12*60*60);
-
-    // Stuff to test
-    seconds_into_day = 82390;
 
     if(sqlite3_prepare_v2(handle, 
         "select first_stop_info.stop_name, second_stop_info.stop_name, trips.trip_headsign, trips.trip_id, trips.shape_id, first_stop.departure_time, second_stop.departure_time, first_stop.shape_dist_traveled, second_stop.shape_dist_traveled "
@@ -133,6 +130,7 @@ int main(int argc, char** args)
     sqlite3_bind_int(main_stmt, 2, seconds_into_day);
 
     printf("{\"locs\": [");
+    fflush(stdout);
     char delim = ' ';
     double lat, lon, dist_traveled, fraction_complete, second_dist_traveled, first_dist_traveled;
     int64_t shape_id, first_dept_time, second_dept_time;
@@ -145,10 +143,7 @@ int main(int argc, char** args)
         first_dist_traveled = sqlite3_column_double(main_stmt, 7);
         second_dist_traveled = sqlite3_column_double(main_stmt, 8);
         shape_id = sqlite3_column_int64(main_stmt, 4);
-
-        if (shape_id != 2147483671)
-            continue;
-
+        
         fraction_complete = (seconds_into_day - first_dept_time) / (second_dept_time - first_dept_time);
         dist_traveled = fraction_complete * (second_dist_traveled - first_dist_traveled) + first_dist_traveled;
 
