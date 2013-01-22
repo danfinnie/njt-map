@@ -8,4 +8,5 @@ web/data.json.new
 gtfs.db*
 src/Makefile
 src/njt_pos*
+bin/njt_pos
 *.o
