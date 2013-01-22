@@ -62,7 +62,7 @@ int main(int argc, char** args)
         printf("%s", (const char *) sqlite3_column_text(stmt, 1));
         printf("%s", "\",\"trip\":\"");
         printf("%s", (const char *) sqlite3_column_text(stmt, 2));
-        printf("\",\"trip_id\":%d}", sqlite3_column_int(stmt, 3));
+        printf("\",\"trip_id\":%lld}", sqlite3_column_int64(stmt, 3));
     }
     puts("]}");
 
