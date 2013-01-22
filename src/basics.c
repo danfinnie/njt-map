@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "sqlite3.c"
+#include "sqlite3.h"
 #include <stdlib.h>
 #include <time.h>
 
