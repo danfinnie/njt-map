@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <inttypes.h>
 
 static sqlite3 *handle;
 
@@ -61,7 +62,7 @@ static void calc_lat_lon(int64_t shape_id, double dist_traveled, double *lat, do
     sqlite3_bind_double(lat_lon_stmt, 2, dist_traveled);
     if(SQLITE_ROW != sqlite3_step(lat_lon_stmt)) {
         fflush(stdout);
-        printf("Error executing lat lon SQL statement for shape %lld, distance %f.", shape_id, dist_traveled);
+        printf("Error executing lat lon SQL statement for shape %" PRId64 ", distance %f.", shape_id, dist_traveled);
         exit(1);
     }
 
@@ -127,7 +128,7 @@ int main(int argc, char** args)
     }
 
     #if DEBUG
-    printf("Date is %s, time is %lld.\n", date, seconds_into_day);
+    printf("Date is %s, time is %" PRId64 ".\n", date, seconds_into_day);
     #endif
 
     sqlite3_bind_text(main_stmt, 1, date, -1, SQLITE_STATIC);
@@ -167,7 +168,7 @@ int main(int argc, char** args)
         printf("%s", "\",\"trip\":\"");
         printf("%s", (const char *) sqlite3_column_text(main_stmt, 2));
         printf("%s", "\",\"trip_id\":");
-        printf("%lld", sqlite3_column_int64(main_stmt, 3));
+        printf("%" PRId64, (int64_t) sqlite3_column_int64(main_stmt, 3));
 
         #if DEBUG
         printf(",\"dist_traveled\":%f,\"fraction_complete\":%f", fraction_complete, dist_traveled);
