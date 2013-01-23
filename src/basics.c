@@ -4,6 +4,8 @@
 #include <time.h>
 #include <math.h>
 #include <inttypes.h>
+#include <sched.h>
+#include <unistd.h>
 
 static sqlite3 *handle;
 
@@ -85,8 +87,28 @@ static void calc_lat_lon(int64_t shape_id, double dist_traveled, double *lat, do
     find_intermediary(&prev_shape, &next_shape, fraction_complete, lat, lon);
 }
 
+static void set_scheduling() {
+    #if defined _POSIX_PRIORITY_SCHEDULING && (_POSIX_PRIORITY_SCHEDULING -0 > 0) 
+    struct sched_param param;
+    int policy;
+
+    #ifdef SCHED_BATCH
+    policy = SCHED_BATCH;
+    #else
+    policy = SCHED_OTHER;
+    #endif
+
+    param.sched_priority = sched_get_priority_min(policy);
+    sched_setscheduler(0, policy, &param);
+    #endif
+
+    int ret;
+    ret = nice(5);
+}
+
 int main(int argc, char** args)
 {
+    set_scheduling();
     sqlite3_stmt *main_stmt;
     
     if(sqlite3_open_v2("gtfs.db", &handle, SQLITE_OPEN_READONLY, 0))

@@ -8,6 +8,6 @@ njt_pos: basics.o sqlite3.o
 sqlite3.o: sqlite3.c
 	gcc $(PERF_OPTIONS) $(SQLITE_OPTIONS) -c -o sqlite3.o sqlite3.c
 basics.o: basics.c
-	gcc $(PERF_OPTIONS) $(BASICS_OPTIONS) -c -std=c99 -o basics.o basics.c
+	gcc $(PERF_OPTIONS) $(BASICS_OPTIONS) -c -std=gnu99 -o basics.o basics.c
 clean:
 	rm -rf njt_pos basics.o sqlite3.o
