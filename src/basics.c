@@ -161,6 +161,7 @@ int main(int argc, char** args)
     char delim = ' ';
     double lat, lon, dist_traveled, fraction_complete, second_dist_traveled, first_dist_traveled;
     int64_t shape_id, first_dept_time, second_dept_time;
+    const char *from, *to, *trip;
 
     #if DEBUG
     int n = 0;
@@ -183,12 +184,11 @@ int main(int argc, char** args)
         fraction_complete = (seconds_into_day - first_dept_time) * 1.0 / (second_dept_time - first_dept_time);
         dist_traveled = fraction_complete * (second_dist_traveled - first_dist_traveled) + first_dist_traveled;
 
-        printf("%s", "{\"from\":\"");
-        printf("%s", (const char *) sqlite3_column_text(main_stmt, 0));
-        printf("%s", "\",\"to\":\"");
-        printf("%s", (const char *) sqlite3_column_text(main_stmt, 1));
-        printf("%s", "\",\"trip\":\"");
-        printf("%s", (const char *) sqlite3_column_text(main_stmt, 2));
+        from = (const char *) sqlite3_column_text(main_stmt, 0);
+        to = (const char *) sqlite3_column_text(main_stmt, 1);
+        trip = (const char *) sqlite3_column_text(main_stmt, 2);
+
+        printf("{\"from\":\"%s\",\"to\":\"%s\",\"trip\":\"%s\"", from, to, trip);
         printf("%s", "\",\"trip_id\":");
         printf("%" PRId64, (int64_t) sqlite3_column_int64(main_stmt, 3));
 
