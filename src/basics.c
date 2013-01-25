@@ -132,7 +132,7 @@ int main(int argc, char** args)
 
     if(sqlite3_prepare_v2(handle, 
         // TODO: Handle midnight switchover appropriately.
-        "select first_stop_info.stop_name, second_stop_info.stop_name, trips.trip_headsign, trips.trip_id, trips.shape_id, first_stop.departure_time, second_stop.departure_time, first_stop.shape_dist_traveled, second_stop.shape_dist_traveled "
+        "select trips.trip_id, trips.shape_id, first_stop.departure_time, second_stop.departure_time, first_stop.shape_dist_traveled, second_stop.shape_dist_traveled "
         "from stop_times first_stop "
         "join stop_times second_stop on ( "
           "first_stop.stop_sequence+1=second_stop.stop_sequence "
@@ -175,21 +175,16 @@ int main(int argc, char** args)
         putchar(delim);
         delim = ',';
 
-        first_dept_time = sqlite3_column_int64(main_stmt, 5);
-        second_dept_time = sqlite3_column_int64(main_stmt, 6);
-        first_dist_traveled = sqlite3_column_double(main_stmt, 7);
-        second_dist_traveled = sqlite3_column_double(main_stmt, 8);
-        shape_id = sqlite3_column_int64(main_stmt, 4);
+        first_dept_time = sqlite3_column_int64(main_stmt, 2);
+        second_dept_time = sqlite3_column_int64(main_stmt, 3);
+        first_dist_traveled = sqlite3_column_double(main_stmt, 4);
+        second_dist_traveled = sqlite3_column_double(main_stmt, 5);
+        shape_id = sqlite3_column_int64(main_stmt, 1);
         
         fraction_complete = (seconds_into_day - first_dept_time) * 1.0 / (second_dept_time - first_dept_time);
         dist_traveled = fraction_complete * (second_dist_traveled - first_dist_traveled) + first_dist_traveled;
 
-        from = (const char *) sqlite3_column_text(main_stmt, 0);
-        to = (const char *) sqlite3_column_text(main_stmt, 1);
-        trip = (const char *) sqlite3_column_text(main_stmt, 2);
-
-        printf("{\"from\":\"%s\",\"to\":\"%s\",\"trip\":\"%s\"", from, to, trip);
-        printf("%s", "\",\"trip_id\":");
+        printf("%s", "{\"trip_id\":");
         printf("%" PRId64, (int64_t) sqlite3_column_int64(main_stmt, 3));
 
         #if DEBUG
