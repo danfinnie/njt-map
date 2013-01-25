@@ -22,6 +22,7 @@ The schema used for the gtfs.db sqlite database is what you would expect given t
 * All latitudes and longitudes are stored as strings so that no precision is lost converting to IEEE floats.
 * The agencies file is not imported.  We are only dealing with one agency (NJ Transit).  NJ Transit divides itself into 2 agencies, one for bus and one for rail, however this distinction is also made by the `route_type` field in the `routes.txt` file.
 * Arrival and depature times in GTFS are stored in the format `hh:mm:ss` as time past noon minus 12 hours ([more info](https://developers.google.com/transit/gtfs/reference#stop_times_fields)).  For easier searching, we convert these values to an integer representing seconds from the same time.  So `13:05:20` becomes `13*60*60 + 5*60 + 20 = 47,120`.
+* The trip headsign is the same for all trips of the same route.
 
 Station Waiting Time
 --------------------

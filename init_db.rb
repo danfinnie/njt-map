@@ -3,6 +3,7 @@
 require 'sqlite3'
 require 'csv'
 require 'arrayfields'
+require 'json'
 
 def open_bus_and_rail(filename, &blk)
 	process_csv = proc { |id_mask, f|
@@ -24,6 +25,12 @@ def open_bus_and_rail(filename, &blk)
 		c.each do |row|
 			inc_insert_count()
 			values = Array.new(row.length) { |i| row[i] }
+			f1lename_sym = filename.intern
+			$discard_cols[f1lename_sym].each do |idx|
+				first_id_col = $id_cols[f1lename_sym].find_index(true)
+				first_id_val = values[first_id_col].to_i
+				$discard_values[f1lename_sym][first_id_val] = values.delete_at(idx)
+			end
 			blk.call(post_process, values)
 		end
 	}.curry
@@ -46,6 +53,15 @@ db.execute("begin transaction")
 
 at_exit do
 	db.execute("commit")
+
+	File.open("web/discard_values.json", "w") do |f|
+		begin
+			f.puts(JSON.generate($discard_values))
+		rescue JSON::GeneratorError
+			f.puts($discard_values.inspect)
+			raise $!
+		end
+	end
 end
 
 $insert_count = 0
@@ -54,22 +70,31 @@ $insert_count = 0
 prepared_statements = {}
 
 # Indexed by table name, shows which fields in that table represent IDs.  These fields should be incremented by id_mod.
-id_cols = {}
+$id_cols = {}
+
+# Discarded data is stuff in the gtfs file that we are going to put in a separate JSON file instead.  The keys are table names
+# and the values are the columns to discard.  Values must be sorted high to low.
+$discard_cols = {
+	trips: [3],
+	stops: [3, 2]
+}
+$discard_cols.default = []
+$discard_values = Hash.new { |h, k| h[k] = {} }
 
 # Populate above variables
 File.readlines("schema.sql").each do |sql|
 	name = sql[/table\W*(.*?)\(/, 1].intern
 
 	id_col = sql.gsub(/,\W*primary key.*/, '').split(',').map {|y| !!(y =~ /[\W_]id/) }
-	id_cols[name] = id_col
+	$id_cols[name] = id_col
 
 	placeholders = Array.new(id_col.size, "?").join(",")
 	prepared_statements[name] = db.prepare("insert into #{name} values (#{placeholders})")
 end
 
-%w[routes trips calendar_dates shapes stops].each do |filename|
+%w[trips stops routes calendar_dates shapes].each do |filename|
 	stmt = prepared_statements[filename.intern]
-	id_col = id_cols[filename.intern]
+	id_col = $id_cols[filename.intern]
 	open_bus_and_rail(filename) do |post_process, row|
 		begin
 			stmt.execute(*post_process.call(row, id_col))
@@ -82,8 +107,9 @@ end
 	end
 end
 
+# Process stop times
 stmt = prepared_statements[:stop_times]
-id_col = id_cols[:stop_times]
+id_col = $id_cols[:stop_times]
 open_bus_and_rail("stop_times") do |post_process, values|
 	# Convert string times to seconds.
 	(1..2).each do |i|
