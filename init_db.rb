@@ -26,10 +26,10 @@ def open_bus_and_rail(filename, &blk)
 			inc_insert_count()
 			values = Array.new(row.length) { |i| row[i] }
 			f1lename_sym = filename.intern
-			$discard_cols[f1lename_sym].each do |idx|
+			$json_cols[f1lename_sym].each do |idx|
 				first_id_col = $id_cols[f1lename_sym].find_index(true)
 				first_id_val = values[first_id_col].to_i
-				$discard_values[f1lename_sym][first_id_val] = values.delete_at(idx)
+				$json_values[f1lename_sym][first_id_val] = values.delete_at(idx)
 			end
 			blk.call(post_process, values)
 		end
@@ -56,9 +56,9 @@ at_exit do
 
 	File.open("web/discard_values.json", "w") do |f|
 		begin
-			f.puts(JSON.generate($discard_values))
+			f.puts(JSON.generate($json_values))
 		rescue JSON::GeneratorError
-			f.puts($discard_values.inspect)
+			f.puts($json_values.inspect)
 			raise $!
 		end
 	end
@@ -72,8 +72,16 @@ prepared_statements = {}
 # Indexed by table name, shows which fields in that table represent IDs.  These fields should be incremented by id_mod.
 $id_cols = {}
 
-# Discarded data is stuff in the gtfs file that we are going to put in a separate JSON file instead.  The keys are table names
-# and the values are the columns to discard.  Values must be sorted high to low.
+# JSON data is stuff in the gtfs file that we are going to put in a separate JSON file instead.  The keys are table names
+# and the values are the columns to put in the JSON file.  Values must be sorted high to low.
+$json_cols = {
+	trips: [3],
+	stops: [3, 2]
+}
+$json_cols.default = []
+$json_values = Hash.new { |h, k| h[k] = {} }
+
+# Discard data in the gtfs file that we are not going to import.  Values must be sorted high to low.
 $discard_cols = {
 	trips: [3],
 	stops: [3, 2]
