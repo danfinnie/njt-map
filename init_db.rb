@@ -26,11 +26,16 @@ def open_bus_and_rail(filename, &blk)
 			inc_insert_count()
 			values = Array.new(row.length) { |i| row[i] }
 			f1lename_sym = filename.intern
+			indicies_to_delete = []
+			
 			$json_cols[f1lename_sym].each do |idx|
 				first_id_col = $id_cols[f1lename_sym].find_index(true)
 				first_id_val = values[first_id_col].to_i
-				$json_values[f1lename_sym][first_id_val] = values.delete_at(idx)
+				$json_values[f1lename_sym][first_id_val] = values[idx]
+				indicies_to_delete << idx 
 			end
+
+			indicies_to_delete.sort.reverse.each { |idx| values.delete_at(idx) }
 			blk.call(post_process, values)
 		end
 	}.curry
@@ -73,7 +78,7 @@ prepared_statements = {}
 $id_cols = {}
 
 # JSON data is stuff in the gtfs file that we are going to put in a separate JSON file instead.  The keys are table names
-# and the values are the columns to put in the JSON file.  Values must be sorted high to low.
+# and the values are the columns to put in the JSON file.
 $json_cols = {
 	trips: [3],
 	stops: [3, 2]
@@ -81,13 +86,13 @@ $json_cols = {
 $json_cols.default = []
 $json_values = Hash.new { |h, k| h[k] = {} }
 
-# Discard data in the gtfs file that we are not going to import.  Values must be sorted high to low.
+# Discard data in the gtfs file that we are not going to import.  Column indicies are with respect to original column indicies, not
+# indicies post-JSON stuff.
 $discard_cols = {
 	trips: [3],
 	stops: [3, 2]
 }
 $discard_cols.default = []
-$discard_values = Hash.new { |h, k| h[k] = {} }
 
 # Populate above variables
 File.readlines("schema.sql").each do |sql|
