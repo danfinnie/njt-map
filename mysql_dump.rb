@@ -2,12 +2,12 @@
 
 while gets
 	case $_
+	when /^(PRAGMA|BEGIN|COMMIT|ANALYZE|INSERT.*sqlite_stat)/i
+		# drop these lines
 	when /^INSERT/i
 		print $_.sub('"', '`').sub('"', '`') # Quote around column names.
 	when /^CREATE/
 		print $_.gsub(/int(eger?)/i, "bigint")
-	when /^(PRAGMA|BEGIN|COMMIT)/i
-		# drop these lines
 	else
 		print $_
 	end
