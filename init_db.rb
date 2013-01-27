@@ -26,8 +26,8 @@ def open_bus_and_rail(filename, &blk)
 			inc_insert_count()
 			values = Array.new(row.length) { |i| row[i] }
 			f1lename_sym = filename.intern
-			indicies_to_delete = []
-			
+			indicies_to_delete = $discard_cols[f1lename_sym].dup
+
 			$json_cols[f1lename_sym].each do |idx|
 				first_id_col = $id_cols[f1lename_sym].find_index(true)
 				first_id_val = values[first_id_col].to_i
@@ -89,8 +89,8 @@ $json_values = Hash.new { |h, k| h[k] = {} }
 # Discard data in the gtfs file that we are not going to import.  Column indicies are with respect to original column indicies, not
 # indicies post-JSON stuff.
 $discard_cols = {
-	trips: [3],
-	stops: [3, 2]
+	trips: [],
+	stops: []
 }
 $discard_cols.default = []
 
