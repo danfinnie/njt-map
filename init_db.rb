@@ -105,7 +105,7 @@ File.readlines("schema.sql").each do |sql|
 	prepared_statements[name] = db.prepare("insert into #{name} values (#{placeholders})")
 end
 
-%w[trips stops routes calendar_dates shapes].each do |filename|
+%w[trips stops calendar_dates shapes].each do |filename|
 	stmt = prepared_statements[filename.intern]
 	id_col = $id_cols[filename.intern]
 	open_bus_and_rail(filename) do |post_process, row|
