@@ -34,7 +34,7 @@ def open_bus_and_rail(filename, &blk)
 				$json_values[f1lename_sym][first_id_val] = values[idx]
 				indicies_to_delete << idx 
 			end
-
+			
 			indicies_to_delete.sort.reverse.each { |idx| values.delete_at(idx) }
 			blk.call(post_process, values)
 		end
@@ -89,8 +89,10 @@ $json_values = Hash.new { |h, k| h[k] = {} }
 # Discard data in the gtfs file that we are not going to import.  Column indicies are with respect to original column indicies, not
 # indicies post-JSON stuff.
 $discard_cols = {
-	trips: [],
-	stops: []
+	calendar_dates: [2],
+	stop_times: [5, 6], # Merge arrival_time and departure_time later.
+	stops: [1, 6],
+	trips: [0, 5, 4]
 }
 $discard_cols.default = []
 
