@@ -22,5 +22,16 @@ $stmt = $dbh->prepare("
 	JOIN trips ON trips.trip_id = first_stop.trip_id
 	JOIN stops first_stop_info ON first_stop_info.stop_id = first_stop.stop_id
 	JOIN stops second_stop_info ON second_stop_info.stop_id = second_stop.stop_id
-	WHERE trips.service_id");
-$stmt->
+	WHERE trips.service_id in (select service_id from calendar_dates where date = :date)
+    and first_stop.departure_time <= :time
+    and second_stop.departure_time > :time");
+$stmt->bindValue('date', $date);
+$stmt->bindValue('time', $seconds_into_day, PDO::PARAM_INT);
+$stmt->execute();
+
+echo "{\"locs\": [";
+$delim = ' ';
+
+while($row = $stmt->fetch(PDO::FETCH_NUM)) {
+	print_r($row);
+}
