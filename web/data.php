@@ -101,7 +101,7 @@ $seconds_into_day = time() - ($now->format("U") - 12*60*60);
 if ($config['cache-file']) {
 	$cacheStr = file_get_contents($config['cache-file']);
 	$cacheJson = json_decode($cacheStr, true);
-	if ($cacheJson['date'] == $date && $cacheJson['seconds_into_day'] + 20 > $seconds_into_day && $cacheJson['seconds_into_day'] - 20 <  $seconds_into_day) {
+	if ($cacheJson['date'] == $date && $cacheJson['seconds_into_day'] + $config['cache-duration'] > $seconds_into_day && $cacheJson['seconds_into_day'] - $config['cache-duration'] <  $seconds_into_day) {
 		// Cache hit.
 		echo file_get_contents($config['cache-file']);
 		exit(0);
