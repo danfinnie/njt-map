@@ -11,6 +11,8 @@ web/data.json: gtfs.db
 	bin/njt_pos > web/data.json
 json: gtfs.db
 	bin/njt_pos > web/data.json
+gtfs.sql.gz: gtfs.db
+	sqlite3 gtfs.db ".dump" | ./mysql_dump.rb | gzip -c > gtfs.sql.gz
 clean:
 	rm -f gtfs.db
 	make -C src clean

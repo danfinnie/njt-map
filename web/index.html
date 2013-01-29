@@ -2,61 +2,21 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <style type="text/css">
-      html { height: 100% }
-      body { height: 100%; margin: 0; padding: 0 }
-      #map_canvas { height: 100% }
-    </style>
+    <link rel="stylesheet" href="style.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="script.js"></script>
   </head>
   <body onload="initialize()">
-    <div id="map_canvas" style="width:100%; height:100%"></div>
-    <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(40.171877413034224, -74.71853198262102),
-          zoom: 10,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-
-        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-        var currentMarkers = {};
-        // var nextMarkers = {}
-
-        dataGatherer = window.setInterval(function() {
-          var cacheBuster = Math.floor(Math.random()*10000) + "";
-          $.get("data.json", cacheBuster, function(data, textStatus, jqXhr) {
-            nextMarkers = {}
-            $.each(data.locs, function() {
-              var existingMarker = currentMarkers[this.trip_id];
-              var marker;
-              delete currentMarkers[this.trip_id];
-
-              if (existingMarker) {
-                existingMarker.setPosition(new google.maps.LatLng(this.lat, this.lon));
-                existingMarker.setTitle(this.trip + " btwn " + this.from + " and " + this.to);
-                marker = existingMarker;
-              } else {
-                marker = new google.maps.Marker({
-                  position: new google.maps.LatLng(this.lat, this.lon),
-                  title: this.trip + " btwn " + this.from + " and " + this.to
-                });
-                marker.setMap(map);
-              }
-              
-              nextMarkers[this.trip_id] = marker;
-            });
-
-            // Garbage collect old markers and remove them from the map
-            // (they are no longer in existence)
-            $.each(currentMarkers, function() {
-              this.setMap(null);
-            });
-            currentMarkers = nextMarkers;
-          }, "json");
-        }, 1000);
-      }
-    </script>
+    <div id="sidebar">
+      <h1>NJ Transit Simulator</h1>
+      <div id="loading-container">
+        <div id="dummy"></div>
+        <div id="loading">
+          Loading
+        </div>
+      </div>
+    </div>
+    <div id="map_canvas"></div>
   </body>
 </html>

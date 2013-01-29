@@ -5,6 +5,7 @@ rail_data
 njt-map.sublime*
 web/data.json
 web/data.json.new
+web/discard_values.json
 gtfs.db*
 src/Makefile
 src/njt_pos*
