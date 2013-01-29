@@ -23,17 +23,19 @@ body { height: 100%; margin: 0; padding: 0 }
 	box-sizing:  border-box;
 }
 
+/* Loading container, dummy, and loading are from
+ * Nathan Ryan's post on Stack Overflow: 
+ * http://stackoverflow.com/questions/5445491/height-equal-to-dynamic-width-css-fluid-layout
+  */
 #loading-container {
     display: inline-block;
     position: absolute;
     width: 80%;
     bottom: 30px;
 }
-
 #dummy {
     margin-top: 75%;
 }
-
 #loading {
     position: absolute;
     top: 0;
@@ -47,4 +49,15 @@ body { height: 100%; margin: 0; padding: 0 }
 	background-color: ;
 	background: #D3C7AF url('loading.gif') no-repeat center center;
 	padding-top: 15%;
+
+	opacity: 0;
+	-o-transition: opacity 1s ease-in;
+	-webkit-transition: opacity 1s ease-in;
+	-moz-transition: opacity 1s ease-in;
+	transition: opacity 1s ease-in;
+}
+
+/* State changes when the sidebar is hidden */
+body.loading #loading {
+	opacity: 1;
 }

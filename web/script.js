@@ -10,6 +10,7 @@ function initialize() {
   // var nextMarkers = {}
 
   dataGatherer = function() {
+    $("body").addClass("loading");
     var cacheBuster = Math.floor(Math.random()*10000) + "";
     $.get("data.php", cacheBuster, function(data, textStatus, jqXhr) {
       nextMarkers = [];
@@ -31,6 +32,7 @@ function initialize() {
       currentMarkers = nextMarkers;
 
       // Queue up next iteration only after all processing has been done to avoid choking bandwidth/CPU.
+      $("body").removeClass("loading");
       window.setTimeout(dataGatherer, 1000);
     }, "json");
   };
