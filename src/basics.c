@@ -185,10 +185,10 @@ int main(int argc, char** args)
         dist_traveled = fraction_complete * (second_dist_traveled - first_dist_traveled) + first_dist_traveled;
 
         printf("%s", "{\"trip_id\":");
-        printf("%" PRId64, (int64_t) sqlite3_column_int64(main_stmt, 3));
+        printf("%" PRId64, (int64_t) sqlite3_column_int64(main_stmt, 0));
 
         #if DEBUG
-        printf(",\"dist_traveled\":%f,\"fraction_complete\":%f", fraction_complete, dist_traveled);
+        printf(",\"dist_traveled\":%f,\"fraction_complete\":%f", dist_traveled, fraction_complete);
         #endif
 
         // Calculate here so we get some debugging info if this call fails.
