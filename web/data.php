@@ -1,8 +1,5 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include("config.php.inc");
 header("Content-type: application/json");
 
@@ -88,7 +85,7 @@ $now = new DateTime();
 $date = $now->format("Ymd");
 
 $now->setTime(12, 0);
-$seconds_into_day = time() - ($now->getTimestamp() - 12*60*60);
+$seconds_into_day = time() - ($now->format("U") - 12*60*60);
 
 $stmt = $dbh->prepare("
 	SELECT trips.trip_id, trips.shape_id, first_stop.departure_time, second_stop.departure_time, first_stop.shape_dist_traveled, second_stop.shape_dist_traveled
