@@ -1,3 +1,50 @@
 html { height: 100% }
 body { height: 100%; margin: 0; padding: 0 }
-#map_canvas { height: 100% }
+
+#map_canvas {
+	height: 100%;
+	width: 70%;
+	float: left;
+}
+
+#sidebar {
+	height: 100%;
+	width: 30%;
+	float: left;
+	background-color: #9BC295;
+	padding: 5px 20px;
+	position: relative;
+	min-width: 100px;
+
+	border-right: 10px solid #AB9F85;
+	-webkit-box-sizing:  border-box;
+	-o-box-sizing:  border-box;
+	-moz-box-sizing:  border-box;
+	box-sizing:  border-box;
+}
+
+#loading-container {
+    display: inline-block;
+    position: absolute;
+    width: 80%;
+    bottom: 30px;
+}
+
+#dummy {
+    margin-top: 75%;
+}
+
+#loading {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 10%;
+    right: 0;
+	border-radius: 10px;
+
+	text-align: center;
+	font-size: 200%;
+	background-color: ;
+	background: #D3C7AF url('loading.gif') no-repeat center center;
+	padding-top: 15%;
+}
