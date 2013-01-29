@@ -3,6 +3,11 @@
 include("config.php.inc");
 header("Content-type: application/json");
 
+$file = null;
+if ($config['cache-file']) {
+	$file = fopen($config['cache-file'], 'w');
+}
+
 class ShapePt {
 	public $lat, $lon, $dist_traveled;
 
@@ -10,6 +15,16 @@ class ShapePt {
 		$this->lat = $lat;
 		$this->lon = $lon;
 		$this->dist_traveled = $dist_traveled;
+	}
+}
+
+// Output a string to all relevant output buffers.
+function output($str) {
+	global $file;
+	
+	echo $str;
+	if (!is_null($file)) {
+		fwrite($file, $str);
 	}
 }
 
@@ -102,12 +117,12 @@ $stmt->bindValue('date', $date);
 $stmt->bindValue('time', $seconds_into_day, PDO::PARAM_INT);
 $stmt->execute();
 
-echo "{\"date\":\"$date\",\"seconds_into_day\":$seconds_into_day,\"locs\": [";
+output("{\"date\":\"$date\",\"seconds_into_day\":$seconds_into_day,\"locs\": [");
 $delim = '';
 
 while($row = $stmt->fetch(PDO::FETCH_NUM)) {
 	// JSON outputting
-	echo $delim;
+	output($delim);
 	$delim = ',';
 
 	$trip_id = $row[0];
@@ -122,11 +137,15 @@ while($row = $stmt->fetch(PDO::FETCH_NUM)) {
 
     $pos = calc_lat_lon($dbh, $shape_id, $dist_traveled);
 
-    echo json_encode(array(
+    output(json_encode(array(
     	"trip_id" => $trip_id,
     	"lat" => $pos['lat'],
     	"lon" => $pos['lon'],
-    ));
+    )));
 }
 
-echo ']}';
+output(']}');
+
+if (!is_null($file)) {
+	fclose($file);
+}
