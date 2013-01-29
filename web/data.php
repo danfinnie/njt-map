@@ -6,6 +6,82 @@ ini_set('display_errors', 1);
 include("config.php.inc");
 header("Content-type: application/json");
 
+class ShapePt {
+	public $lat, $lon, $dist_traveled;
+
+	function __construct($lat, $lon, $dist_traveled) {
+		$this->lat = $lat;
+		$this->lon = $lon;
+		$this->dist_traveled = $dist_traveled;
+	}
+}
+
+// Returns an array with keys lat and lon.
+function find_intermediary($prev_shape, $next_shape, $fraction_complete) {
+	if ($fraction_complete == 1 || ($prev_shape->lat == $next_shape->lat && $prev_shape->lon == $next_shape->lon)) {
+		return array(
+			"lat" => $prev_shape->lat,
+			"lon" => $prev_shape->lon,
+		);
+	}
+
+	$delta_y = abs($prev_shape->lat - $next_shape->lat);
+    $delta_x = abs($prev_shape->lon - $prev_shape->lon);
+    $m = @(($next_shape->lat - $prev_shape->lat) * 1.0 / ($next_shape->lon - $prev_shape->lon));
+
+    $lon = null;
+    $lat = null;
+    if (is_nan($m) || is_infinite($m)) {
+        $lon = $prev_shape->lon;
+        $lat = $prev_shape->lat + ($next_shape->lat - $prev_shape->lat) * $fraction_complete;
+    } else {
+        $lon = $prev_shape->lon + ($next_shape->lon - $prev_shape->lon) * $fraction_complete;
+        $lat = $m * ($lon - $prev_shape->lon) + $prev_shape->lat;
+    }
+
+    return array(
+    	"lat" => $lat,
+    	"lon" => $lon,
+    );
+}
+
+// Returns an array with keys lat and lon.
+function calc_lat_lon($dbh, $shape_id, $dist_traveled) {
+	static $stmt = null;
+	$fraction_complete;
+	$next_shape;
+
+	if ($stmt == null) {
+		$stmt = $dbh->prepare("
+			select shape_pt_lat, shape_pt_lon, shape_dist_traveled
+            from shapes
+            where shape_id = :shape_id
+            and (start_relevancy < :dist_traveled or start_relevancy = 0)
+            and end_relevancy >= :dist_traveled 
+            order by shape_pt_sequence desc
+            limit 2
+        ");
+	}
+
+	$stmt->bindValue("shape_id", $shape_id);
+	$stmt->bindValue("dist_traveled", $dist_traveled);
+	$stmt->execute();
+
+	$row = $stmt->fetch(PDO::FETCH_NUM);
+	$prev_shape = new ShapePt($row[0], $row[1], $row[2]);
+
+	if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+		$next_shape = new ShapePt($row[0], $row[1], $row[2]);
+		$fraction_complete = ($dist_traveled - $prev_shape->dist_traveled) / ($next_shape->dist_traveled - $prev_shape->dist_traveled);
+	} else {
+		$next_shape = $prev_shape;
+		$fraction_complete = 1;
+	}
+
+	$stmt->closeCursor();
+	return find_intermediary($prev_shape, $next_shape, $fraction_complete);
+}
+
 $dbh = new PDO('mysql:host=localhost;dbname='.$config['db-name'], $config['db-user'], $config['db-password']);
 
 $now = new DateTime();
@@ -47,8 +123,7 @@ while($row = $stmt->fetch(PDO::FETCH_NUM)) {
     $fraction_complete = ($seconds_into_day - $first_dept_time) * 1.0 / ($second_dept_time - $first_dept_time);
     $dist_traveled = $fraction_complete * ($second_dist_traveled - $first_dist_traveled) + $first_dist_traveled;
 
-    //$pos = calc_lat_lon($shape_id, $dist_traveled);
-    $pos = array("lat" => 42, "lon" => 45.3);
+    $pos = calc_lat_lon($dbh, $shape_id, $dist_traveled);
 
     echo json_encode(array(
     	"trip_id" => $trip_id,
