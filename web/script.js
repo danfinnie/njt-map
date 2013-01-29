@@ -9,14 +9,14 @@ function initialize() {
   var currentMarkers = [];
   // var nextMarkers = {}
 
-  dataGatherer = window.setInterval(function() {
+  dataGatherer = function() {
     var cacheBuster = Math.floor(Math.random()*10000) + "";
-    $.get("data.json", cacheBuster, function(data, textStatus, jqXhr) {
+    $.get("data.php", cacheBuster, function(data, textStatus, jqXhr) {
       nextMarkers = [];
       $.each(data.locs, function() {
         marker = new google.maps.Marker({
           position: new google.maps.LatLng(this.lat, this.lon),
-          title: this.trip + " btwn " + this.from + " and " + this.to
+          title: "Unknown trip" // this.trip + " btwn " + this.from + " and " + this.to
         });
         marker.setMap(map);
         nextMarkers.push(marker);
@@ -29,6 +29,10 @@ function initialize() {
       });
 
       currentMarkers = nextMarkers;
+
+      // Queue up next iteration only after all processing has been done to avoid choking bandwidth/CPU.
+      window.setTimeout(dataGatherer, 1000);
     }, "json");
-  }, 1000);
+  };
+  dataGatherer();
 }
