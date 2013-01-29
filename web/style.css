@@ -1,6 +1,30 @@
 html { height: 100% }
-body { height: 100%; margin: 0; padding: 0 }
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'Donegal One', serif;
+}
 
+h1, h2 {
+	font-family: 'Iceland', sans-serif;
+	margin-top: 15px;
+}
+
+h1 {
+	font-size: 3em;
+}
+
+h2 {
+	font-size: 2em;
+}
+
+.block-img {
+	display: block;
+	width: 100%;
+	text-align: center;
+	margin: 7px 0;
+}
 #map_canvas {
 	height: 100%;
 	width: 70%;
@@ -16,6 +40,7 @@ body { height: 100%; margin: 0; padding: 0 }
 	position: relative;
 	min-width: 100px;
 
+	padding-right: 10px;
 	border-right: 10px solid #AB9F85;
 	-webkit-box-sizing:  border-box;
 	-o-box-sizing:  border-box;
@@ -48,6 +73,7 @@ body { height: 100%; margin: 0; padding: 0 }
 	font-size: 200%;
 	background-color: #D3C7AF;
 	padding-top: 15%;
+	font-family: 'Iceland', sans-serif;
 
 	opacity: 0;
 	-o-transition: opacity 1s ease-in;
