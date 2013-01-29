@@ -102,7 +102,7 @@ $stmt->bindValue('date', $date);
 $stmt->bindValue('time', $seconds_into_day, PDO::PARAM_INT);
 $stmt->execute();
 
-echo "{\"locs\": [";
+echo "{\"date\":\"$date\",\"seconds_into_day\":$seconds_into_day,\"locs\": [";
 $delim = '';
 
 while($row = $stmt->fetch(PDO::FETCH_NUM)) {
