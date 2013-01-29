@@ -4,9 +4,6 @@ include("config.php.inc");
 header("Content-type: application/json");
 
 $file = null;
-if ($config['cache-file']) {
-	$file = fopen($config['cache-file'], 'w');
-}
 
 class ShapePt {
 	public $lat, $lon, $dist_traveled;
@@ -21,7 +18,7 @@ class ShapePt {
 // Output a string to all relevant output buffers.
 function output($str) {
 	global $file;
-	
+
 	echo $str;
 	if (!is_null($file)) {
 		fwrite($file, $str);
@@ -94,13 +91,27 @@ function calc_lat_lon($dbh, $shape_id, $dist_traveled) {
 	return find_intermediary($prev_shape, $next_shape, $fraction_complete);
 }
 
-$dbh = new PDO('mysql:host=localhost;dbname='.$config['db-name'], $config['db-user'], $config['db-password']);
-
 $now = new DateTime();
 $date = $now->format("Ymd");
 
 $now->setTime(12, 0);
 $seconds_into_day = time() - ($now->format("U") - 12*60*60);
+
+// Check for relevant cached results.
+if ($config['cache-file']) {
+	$cacheStr = file_get_contents($config['cache-file']);
+	$cacheJson = json_decode($cacheStr, true, 4);
+	if ($cacheJson['date'] == $date && $cacheJson['seconds_into_day'] + 20 > $seconds_into_day && $cacheJson['seconds_into_day'] - 20 <  $seconds_into_day) {
+		// Cache hit.
+		echo file_get_contents($config['cache-file']);
+		exit(0);
+	}
+
+	// Cache miss
+	$file = fopen($config['cache-file'], 'w');
+}
+
+$dbh = new PDO('mysql:host=localhost;dbname='.$config['db-name'], $config['db-user'], $config['db-password']);
 
 $stmt = $dbh->prepare("
 	SELECT trips.trip_id, trips.shape_id, first_stop.departure_time, second_stop.departure_time, first_stop.shape_dist_traveled, second_stop.shape_dist_traveled
