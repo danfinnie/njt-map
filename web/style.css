@@ -137,10 +137,16 @@ h2 {
 
 @keyframes loading-rotate {
 	from {
+		-webkit-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
 		transform: rotate(0deg);
 	}
 
 	to {
+		-webkit-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
 		transform: rotate(360deg);
 	}
 }
@@ -164,6 +170,9 @@ body.collapsed #map_canvas {
 }
 
 body.collapsed #collapse {
-	transform: rotate(180deg);
+	-moz-transform: rotate(540deg);
+	-webkit-transform: rotate(540deg);
+	-o-transform: rotate(540deg);
+	transform: rotate(540deg);
 	left: 0;
 }
