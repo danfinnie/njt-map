@@ -1,11 +1,24 @@
-function initialize() {
+initialize = (function() { 
+var map;
+
+$(function() {
+  $("#collapse").on("click", function() {
+    $("body").toggleClass("collapsed");
+    window.setTimeout(function() {
+      google.maps.event.trigger(map, "resize");
+    }, 1000);
+  });
+});
+
+return (function() {
   var mapOptions = {
     center: new google.maps.LatLng(40.171877413034224, -74.71853198262102),
     zoom: 10,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
-  var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  window.map = map;
   var currentMarkers = [];
   // var nextMarkers = {}
 
@@ -37,4 +50,5 @@ function initialize() {
     }, "json");
   };
   dataGatherer();
-}
+});
+})();
