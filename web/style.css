@@ -53,6 +53,12 @@ h2 {
 	-o-box-sizing:  border-box;
 	-moz-box-sizing:  border-box;
 	box-sizing:  border-box;
+
+	/* For collapsing */
+	-moz-transition: all 1s ease-in-out;
+	-o-transition: all 1s ease-in-out;
+	-webkit-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
 }
 
 #collapse {
@@ -64,17 +70,17 @@ h2 {
 	top: 45%;
 	left: 30%;
 	z-index: 999;
-	padding-top: 16px;
+	padding-top: 17px;
 
 	cursor: pointer;
 
 	font-size: 2em;
 	text-align: center;
 
-	-moz-transition: transform 1s ease-in-out;
-	-o-transition: transform 1s ease-in-out;
-	-webkit-transition: transform 1s ease-in-out;
-	transition: transform 1s ease-in-out;
+	-moz-transition: all 1s ease-in-out;
+	-o-transition: all 1s ease-in-out;
+	-webkit-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
 
 	-webkit-box-sizing:  border-box;
 	-o-box-sizing:  border-box;
@@ -150,6 +156,7 @@ body.collapsed #sidebar {
 	padding: 0;
 	border: 0;
 	overflow: hidden;
+	background: transparent;
 }
 
 body.collapsed #map_canvas {
