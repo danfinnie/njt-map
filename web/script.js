@@ -6,7 +6,40 @@ initialize = (function() {
       $("body").toggleClass("collapsed");
       window.setTimeout(function() {
         google.maps.event.trigger(map, "resize");
-      }, 1000);
+      }, 100);
+    });
+
+    $(".maintain-proportions").each(function() {
+      var $this = $(this);
+      $this.data("scale-factor", $this.height() / $this.width());
+    });
+
+    $(".maintain-square").each(function() {
+        var $this = $(this);
+        var newHeight = $this.innerWidth();
+        
+        $.each(["padding-top", "padding-bottom"], function() {
+          newHeight -= parseFloat($this.css(this+""));
+        });
+        $this.outerHeight(newHeight);
+    });
+    
+
+    $(window).on("resize", function() {
+      $(".maintain-proportions").each(function() {
+        var $this = $(this);
+        $this.height($this.width() * $this.data("scale-factor"));
+      });
+
+      $(".maintain-square").each(function() {
+        var $this = $(this);
+        var newHeight = $this.innerWidth();
+        
+        $.each(["padding-top", "padding-bottom"], function() {
+          newHeight -= parseFloat($this.css(this+""));
+        });
+        $this.outerHeight(newHeight);
+      });
     });
   });
 

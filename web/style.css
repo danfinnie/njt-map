@@ -28,6 +28,21 @@ h2 {
 	margin: 7px 0;
 }
 
+#view-more {
+	position: absolute;
+	width: 80%;
+	left: 10%;
+	height: 60px;
+	background: red;
+	border-radius: 10px;
+}
+
+#view-more a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
 #map_canvas {
 	height: 100%;
 	width: 70%;
@@ -88,25 +103,11 @@ h2 {
 	box-sizing:  border-box;
 }
 
-/* Loading container, dummy, and loading are from
- * Nathan Ryan's post on Stack Overflow: 
- * http://stackoverflow.com/questions/5445491/height-equal-to-dynamic-width-css-fluid-layout
-  */
-#loading-container {
-    display: inline-block;
-    position: absolute;
-    width: 80%;
-    bottom: 30px;
-}
-#dummy {
-    margin-top: 75%;
-}
 #loading {
     position: absolute;
-    top: 0;
-    bottom: 0;
     left: 10%;
-    right: 0;
+    width: 80%;
+    bottom: 30px;
 	border-radius: 10px;
 
 	text-align: center;
