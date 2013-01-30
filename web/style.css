@@ -32,15 +32,58 @@ h2 {
 	position: absolute;
 	width: 80%;
 	left: 10%;
-	height: 60px;
-	background: red;
+	height: 80px;
+	background: center center url('propic.jpg');
 	border-radius: 10px;
+	margin-top: 20px;
+	text-shadow: 3px 3px black;
 }
 
 #view-more a {
 	display: block;
 	width: 100%;
 	height: 100%;
+
+	color: white;
+	line-height: 80px;
+	margin-top: -5px;
+}
+
+#view-more a div {
+	float: left;
+	-moz-transition: width 1s ease-in-out, margin-left 2s ease-in-out;
+	-o-transition: width 1s ease-in-out, margin-left 2s ease-in-out;
+	-webkit-transition: width 1s ease-in-out, margin-left 2s ease-in-out;
+	transition: width 1s ease-in-out, margin-left 2s ease-in-out;
+}
+
+#view-more #laquo {
+	width: 15%;
+
+	font-size: 4em;
+	text-align: center;
+	vertical-align: center;
+	overflow: hidden;
+}
+
+#view-more #text {
+	width: 85%;
+	margin-top: 15px;
+
+	font-size: 1.2em;
+	vertical-align: top;
+	line-height: 20px;
+}
+
+@media all and (max-width: 1000px) {
+  #view-more #laquo {
+    width: 0;
+  }
+
+  #view-more #text {
+    width: 100%;
+    margin-left: 10px;
+  }
 }
 
 #map_canvas {
