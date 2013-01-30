@@ -44,4 +44,17 @@ Or:
     and stop_sequence > 1
     order by trip_id;
 
-This data is not cleaned on import, instead the distance calculation code was designed to gracefully handle distances of 0.  
+This data is not cleaned on import, instead the distance calculation code was designed to gracefully handle distances of 0.
+
+To do
+=====
+
+* Color code the routes.
+* Collapse/expand the sidebar.
+* Hover over pins to see the trip name.
+* Hide and show specific routes.
+* Add a title tag.
+* Make links open in new window.
+* Add my name somewhere in the project.
+* Handle midnight correctly.
+* Toggle bus/train data.  
