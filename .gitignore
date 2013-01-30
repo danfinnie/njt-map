@@ -6,7 +6,8 @@ njt-map.sublime*
 web/data.json
 web/data.json.new
 web/discard_values.json
-gtfs.db*
+web/config.php.inc
+gtfs.*
 src/Makefile
 src/njt_pos*
 bin/njt_pos
