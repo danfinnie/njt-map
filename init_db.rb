@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby19
+#! ruby
 
 require 'sqlite3'
 require 'csv'
